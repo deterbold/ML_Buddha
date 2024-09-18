@@ -13,6 +13,14 @@
 		42E0E3CA2C9B1F4E0076FFF7 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 42E0E3C92C9B1F4E0076FFF7 /* Base */; };
 		42E0E3CC2C9B1F500076FFF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 42E0E3CB2C9B1F500076FFF7 /* Assets.xcassets */; };
 		42E0E3CF2C9B1F500076FFF7 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 42E0E3CE2C9B1F500076FFF7 /* Base */; };
+		42E0E3E02C9B223F0076FFF7 /* BackCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3DF2C9B223F0076FFF7 /* BackCameraViewController.swift */; };
+		42E0E3E22C9B225B0076FFF7 /* FrontCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3E12C9B225B0076FFF7 /* FrontCameraViewController.swift */; };
+		42E0E3E42C9B22840076FFF7 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3E32C9B22840076FFF7 /* TimerView.swift */; };
+		42E0E3E62C9B22A30076FFF7 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3E52C9B22A30076FFF7 /* CameraManager.swift */; };
+		42E0E3E82C9B22B10076FFF7 /* ObjectRecognitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3E72C9B22B10076FFF7 /* ObjectRecognitionManager.swift */; };
+		42E0E3EA2C9B22BD0076FFF7 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3E92C9B22BD0076FFF7 /* SoundManager.swift */; };
+		42E0E3EC2C9B22C70076FFF7 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3EB2C9B22C70076FFF7 /* Extensions.swift */; };
+		42E0E3F02C9B26610076FFF7 /* InstructionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3EF2C9B26610076FFF7 /* InstructionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +32,14 @@
 		42E0E3CB2C9B1F500076FFF7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		42E0E3CE2C9B1F500076FFF7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		42E0E3D02C9B1F500076FFF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		42E0E3DF2C9B223F0076FFF7 /* BackCameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackCameraViewController.swift; sourceTree = "<group>"; };
+		42E0E3E12C9B225B0076FFF7 /* FrontCameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontCameraViewController.swift; sourceTree = "<group>"; };
+		42E0E3E32C9B22840076FFF7 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
+		42E0E3E52C9B22A30076FFF7 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		42E0E3E72C9B22B10076FFF7 /* ObjectRecognitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectRecognitionManager.swift; sourceTree = "<group>"; };
+		42E0E3E92C9B22BD0076FFF7 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		42E0E3EB2C9B22C70076FFF7 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		42E0E3EF2C9B26610076FFF7 /* InstructionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,13 +74,87 @@
 			children = (
 				42E0E3C22C9B1F4E0076FFF7 /* AppDelegate.swift */,
 				42E0E3C42C9B1F4E0076FFF7 /* SceneDelegate.swift */,
+				42E0E3D02C9B1F500076FFF7 /* Info.plist */,
+				42E0E3CB2C9B1F500076FFF7 /* Assets.xcassets */,
+				42E0E3D62C9B21480076FFF7 /* Sounds */,
+				42E0E3D82C9B217D0076FFF7 /* Images */,
+				42E0E3DB2C9B219A0076FFF7 /* Models */,
+				42E0E3D92C9B218C0076FFF7 /* Controllers */,
+				42E0E3DD2C9B21C30076FFF7 /* Views */,
+				42E0E3DC2C9B21C00076FFF7 /* Managers */,
+				42E0E3DE2C9B21DB0076FFF7 /* Utilities */,
 				42E0E3C62C9B1F4E0076FFF7 /* ViewController.swift */,
 				42E0E3C82C9B1F4E0076FFF7 /* Main.storyboard */,
-				42E0E3CB2C9B1F500076FFF7 /* Assets.xcassets */,
 				42E0E3CD2C9B1F500076FFF7 /* LaunchScreen.storyboard */,
-				42E0E3D02C9B1F500076FFF7 /* Info.plist */,
 			);
 			path = "ML Buddha";
+			sourceTree = "<group>";
+		};
+		42E0E3D62C9B21480076FFF7 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				42E0E3D72C9B21690076FFF7 /* Images */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
+		42E0E3D72C9B21690076FFF7 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		42E0E3D82C9B217D0076FFF7 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		42E0E3D92C9B218C0076FFF7 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				42E0E3EF2C9B26610076FFF7 /* InstructionViewController.swift */,
+				42E0E3E12C9B225B0076FFF7 /* FrontCameraViewController.swift */,
+				42E0E3DF2C9B223F0076FFF7 /* BackCameraViewController.swift */,
+			);
+			name = Controllers;
+			path = "New Group/Controllers";
+			sourceTree = "<group>";
+		};
+		42E0E3DB2C9B219A0076FFF7 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		42E0E3DC2C9B21C00076FFF7 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				42E0E3E52C9B22A30076FFF7 /* CameraManager.swift */,
+				42E0E3E72C9B22B10076FFF7 /* ObjectRecognitionManager.swift */,
+				42E0E3E92C9B22BD0076FFF7 /* SoundManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		42E0E3DD2C9B21C30076FFF7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				42E0E3E32C9B22840076FFF7 /* TimerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		42E0E3DE2C9B21DB0076FFF7 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				42E0E3EB2C9B22C70076FFF7 /* Extensions.swift */,
+			);
+			name = Utilities;
+			path = Managers/Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,9 +228,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42E0E3E42C9B22840076FFF7 /* TimerView.swift in Sources */,
+				42E0E3E62C9B22A30076FFF7 /* CameraManager.swift in Sources */,
 				42E0E3C72C9B1F4E0076FFF7 /* ViewController.swift in Sources */,
 				42E0E3C32C9B1F4E0076FFF7 /* AppDelegate.swift in Sources */,
+				42E0E3E82C9B22B10076FFF7 /* ObjectRecognitionManager.swift in Sources */,
+				42E0E3EC2C9B22C70076FFF7 /* Extensions.swift in Sources */,
+				42E0E3E22C9B225B0076FFF7 /* FrontCameraViewController.swift in Sources */,
+				42E0E3F02C9B26610076FFF7 /* InstructionViewController.swift in Sources */,
+				42E0E3E02C9B223F0076FFF7 /* BackCameraViewController.swift in Sources */,
 				42E0E3C52C9B1F4E0076FFF7 /* SceneDelegate.swift in Sources */,
+				42E0E3EA2C9B22BD0076FFF7 /* SoundManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
