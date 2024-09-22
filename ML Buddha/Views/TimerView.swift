@@ -7,23 +7,78 @@
 
 import UIKit
 
-class TimerView: UIViewController {
+class TimerView: UIView {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    // MARK: - Properties
 
-        // Do any additional setup after loading the view.
+    private var timerLabel: UILabel!
+    private var countdownTimer: Timer?
+    private var timeRemaining: Int = 5
+    private var totalTime: Int = 5
+
+    // Closure to notify when the timer finishes
+    var timerCompletionHandler: (() -> Void)?
+
+    // MARK: - Initialization
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
     }
-    
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupView()
     }
-    */
 
+    // MARK: - View Setup
+
+    private func setupView() {
+        backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        layer.cornerRadius = frame.size.width / 2
+        layer.masksToBounds = true
+
+        timerLabel = UILabel()
+        timerLabel.translatesAutoresizingMaskIntoConstraints = false
+        timerLabel.textAlignment = .center
+        timerLabel.font = UIFont.systemFont(ofSize: 80, weight: .bold)
+        timerLabel.textColor = .white
+        timerLabel.text = "\(timeRemaining)"
+        addSubview(timerLabel)
+
+        // Center the timerLabel within TimerView
+        NSLayoutConstraint.activate([
+            timerLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            timerLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+    }
+
+    // MARK: - Timer Functions
+
+    func startTimer(duration: Int) {
+        totalTime = duration
+        timeRemaining = duration
+        timerLabel.text = "\(timeRemaining)"
+
+        countdownTimer?.invalidate()
+        countdownTimer = Timer.scheduledTimer(timeInterval: 1.0,
+                                              target: self,
+                                              selector: #selector(updateTimer),
+                                              userInfo: nil,
+                                              repeats: true)
+    }
+
+    @objc private func updateTimer() {
+        timeRemaining -= 1
+        timerLabel.text = "\(timeRemaining)"
+
+        if timeRemaining <= 0 {
+            countdownTimer?.invalidate()
+            timerCompletionHandler?()
+        }
+    }
+
+    func stopTimer() {
+        countdownTimer?.invalidate()
+    }
 }

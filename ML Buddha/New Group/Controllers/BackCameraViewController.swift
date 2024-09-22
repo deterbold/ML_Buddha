@@ -10,183 +10,141 @@ import AVFoundation
 import Vision
 import CoreML
 
-class BackCameraViewController: UIViewController {
+class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectRecognitionManagerDelegate {
 
     // MARK: - Properties
 
-    var captureSession: AVCaptureSession!
-    var previewLayer: AVCaptureVideoPreviewLayer!
-
-    var detectionRequest: VNCoreMLRequest!
-    var detectionModel: VNCoreMLModel!
-
-    var timerLabel: UILabel!
-    var countdownTimer: Timer?
-    var timeRemaining = 5
-
+    let cameraManager = CameraManager()
+    let recognitionManager = ObjectRecognitionManager()
+    var timerView: TimerView!
     var isTimerRunning = false
-
-    // Replace 'YourCustomModel' with the name of your Core ML model class
-    let modelName = YourCustomModel()
-
-    // Replace 'YourObjectIdentifier' with the identifier of your target object
-    let targetObjectIdentifier = "YourObjectIdentifier"
 
     // MARK: - View Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
+
+        setupRecognitionManager()
         setupCamera()
-        setupTimerLabel()
-        setupModel()
+        setupTimerView()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        isTimerRunning = false
+        cameraManager.startSession()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        captureSession.stopRunning()
+        cameraManager.stopSession()
+    }
+
+    // MARK: - Recognition Manager Setup
+
+    func setupRecognitionManager() {
+        recognitionManager.delegate = self
     }
 
     // MARK: - Camera Setup
 
     func setupCamera() {
-        captureSession = AVCaptureSession()
-        captureSession.sessionPreset = .high
-
-        guard let backCamera = AVCaptureDevice.default(for: .video) else {
-            print("No back camera available")
-            return
-        }
-
-        do {
-            let input = try AVCaptureDeviceInput(device: backCamera)
-            if captureSession.canAddInput(input) {
-                captureSession.addInput(input)
-            } else {
-                print("Unable to add back camera input to capture session")
-                return
-            }
-
-            let videoOutput = AVCaptureVideoDataOutput()
-            videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
-            if captureSession.canAddOutput(videoOutput) {
-                captureSession.addOutput(videoOutput)
-            } else {
-                print("Unable to add video output to capture session")
-                return
-            }
-
-            previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-            previewLayer.frame = view.bounds
-            previewLayer.videoGravity = .resizeAspectFill
-            view.layer.addSublayer(previewLayer)
-
-            captureSession.startRunning()
-        } catch {
-            print("Error setting up back camera: \(error.localizedDescription)")
-        }
+        cameraManager.delegate = self
+        cameraManager.checkCameraAuthorization()
     }
 
-    // MARK: - Timer Label Setup
+    // MARK: - TimerView Setup
 
-    func setupTimerLabel() {
-        timerLabel = UILabel()
-        timerLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 200)
-        timerLabel.center = view.center
-        timerLabel.textAlignment = .center
-        timerLabel.font = UIFont.systemFont(ofSize: 80, weight: .bold)
-        timerLabel.textColor = .white
-        timerLabel.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-        timerLabel.layer.cornerRadius = 100
-        timerLabel.layer.masksToBounds = true
-        timerLabel.isHidden = true
-        view.addSubview(timerLabel)
-    }
-
-    // MARK: - Model Setup
-
-    func setupModel() {
-        do {
-            let config = MLModelConfiguration()
-            detectionModel = try VNCoreMLModel(for: modelName.model)
-            detectionRequest = VNCoreMLRequest(model: detectionModel, completionHandler: handleDetection)
-        } catch {
-            print("Error loading Core ML model: \(error.localizedDescription)")
+    func setupTimerView() {
+        let timerSize: CGFloat = 200
+        timerView = TimerView(frame: CGRect(x: (view.bounds.width - timerSize) / 2,
+                                            y: (view.bounds.height - timerSize) / 2,
+                                            width: timerSize,
+                                            height: timerSize))
+        timerView.isHidden = true
+        timerView.timerCompletionHandler = { [weak self] in
+            guard let self = self else { return }
+            self.isTimerRunning = false
+            self.timerView.isHidden = true
+            self.transitionToFrontCamera()
         }
+        view.addSubview(timerView)
     }
 
     // MARK: - Transition to Front Camera
 
     func transitionToFrontCamera() {
+        cameraManager.stopSession()
+
         let frontCameraVC = FrontCameraViewController()
         frontCameraVC.modalPresentationStyle = .fullScreen
         present(frontCameraVC, animated: true, completion: nil)
     }
-}
 
-// MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
+    // MARK: - Start Timer
 
-extension BackCameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
+    func startTimer() {
+        guard !isTimerRunning else { return }
+        isTimerRunning = true
+        timerView.isHidden = false
+        timerView.startTimer(duration: 5)
+    }
 
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard !isTimerRunning else { return } // Skip processing if timer is running
+    // MARK: - ObjectRecognitionManagerDelegate
 
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
-        do {
-            try handler.perform([detectionRequest])
-        } catch {
-            print("Error performing detection request: \(error.localizedDescription)")
+    func didRecognizeTargetObject() {
+        DispatchQueue.main.async {
+            self.startTimer()
         }
     }
-}
 
-// MARK: - Detection Handling
+    func didLoseTargetObject() {
+        // Handle if needed
+    }
 
-extension BackCameraViewController {
+    func didEncounterRecognitionError(_ error: Error) {
+        print("Recognition error: \(error.localizedDescription)")
+        // Handle error, possibly show an alert
+    }
 
-    func handleDetection(request: VNRequest, error: Error?) {
-        if let error = error {
-            print("Detection error: \(error.localizedDescription)")
-            return
+    func didUpdateRecognizedObjects(_ objects: [(identifier: String, confidence: VNConfidence)]) {
+        // Print out the recognized objects
+        for (identifier, confidence) in objects {
+            print("Recognized object: \(identifier), Confidence: \(confidence)")
         }
+    }
 
-        guard let results = request.results as? [VNClassificationObservation] else { return }
+    // MARK: - CameraManagerDelegate
 
-        if let topResult = results.first {
-            if topResult.identifier == targetObjectIdentifier && topResult.confidence > 0.8 {
-                DispatchQueue.main.async {
-                    self.startTimer()
+    func didOutput(sampleBuffer: CMSampleBuffer) {
+        guard !isTimerRunning else { return }
+        recognitionManager.processSampleBuffer(sampleBuffer)
+    }
+
+    func didChangeAuthorizationStatus(isAuthorized: Bool) {
+        if isAuthorized {
+            cameraManager.configureSession(position: .back)
+            DispatchQueue.main.async {
+                if let previewLayer = self.cameraManager.getPreviewLayer() {
+                    previewLayer.frame = self.view.bounds
+                    self.view.layer.insertSublayer(previewLayer, at: 0)
                 }
+                self.cameraManager.startSession()
+            }
+        } else {
+            // Handle unauthorized status
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "Camera Access Denied", message: "Please enable camera access in Settings.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { _ in
+                    if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(settingsURL)
+                    }
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                self.present(alert, animated: true)
             }
         }
     }
 }
 
-// MARK: - Timer Functions
-
-extension BackCameraViewController {
-
-    func startTimer() {
-        guard !isTimerRunning else { return }
-        isTimerRunning = true
-        timeRemaining = 5
-        timerLabel.text = "\(timeRemaining)"
-        timerLabel.isHidden = false
-
-        countdownTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
-    }
-
-    @objc func updateTimer() {
-        timeRemaining -= 1
-        timerLabel.text = "\(timeRemaining)"
-
-        if timeRemaining <= 0 {
-            countdownTimer?.invalidate()
-            timerLabel.isHidden = true
-            isTimerRunning = false
-            transitionToFrontCamera()
-        }
-    }
-}

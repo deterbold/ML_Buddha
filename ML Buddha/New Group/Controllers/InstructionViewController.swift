@@ -27,7 +27,7 @@ class InstructionViewController: UIViewController {
         button.backgroundColor = UIColor.systemBlue
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 8
-        button.addTarget(InstructionViewController.self, action: #selector(startButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(startButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
