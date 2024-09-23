@@ -23,7 +23,8 @@ class ObjectRecognitionManager {
     
     private var detectionRequest: VNCoreMLRequest!
     private var detectionModel: VNCoreMLModel!
-    private var modelName: FastViTMA36F16!
+    //private var modelName: FastViTMA36F16!
+    private var modelName: ML_Buddha!
     
     private var isObjectDetected = false
     private var detectionCounter = 0
@@ -45,7 +46,8 @@ class ObjectRecognitionManager {
     private func setupModel() {
         do {
             let defaultConfig = MLModelConfiguration()
-            modelName = try FastViTMA36F16(configuration: defaultConfig)
+            //modelName = try FastViTMA36F16(configuration: defaultConfig)
+            modelName = try ML_Buddha(configuration: defaultConfig)
             detectionModel = try VNCoreMLModel(for: modelName.model)
             detectionRequest = VNCoreMLRequest(model: detectionModel, completionHandler: handleDetection)
         } catch {

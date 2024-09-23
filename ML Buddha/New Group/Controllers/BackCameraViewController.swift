@@ -18,6 +18,7 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
     let recognitionManager = ObjectRecognitionManager()
     var timerView: TimerView!
     var isTimerRunning = false
+    var recognizedObjectLabel: UILabel!
 
     // MARK: - View Lifecycle
 
@@ -28,6 +29,7 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
         setupRecognitionManager()
         setupCamera()
         setupTimerView()
+        setupRecognizedObjectLabel()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -72,6 +74,29 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
         view.addSubview(timerView)
     }
 
+    // MARK: - Recognized Object Label Setup
+
+    func setupRecognizedObjectLabel() {
+        recognizedObjectLabel = UILabel()
+        recognizedObjectLabel.translatesAutoresizingMaskIntoConstraints = false
+        recognizedObjectLabel.textAlignment = .center
+        recognizedObjectLabel.textColor = .white
+        recognizedObjectLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        recognizedObjectLabel.numberOfLines = 0 // Allow multiple lines
+        recognizedObjectLabel.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        recognizedObjectLabel.layer.cornerRadius = 8
+        recognizedObjectLabel.layer.masksToBounds = true
+
+        view.addSubview(recognizedObjectLabel)
+
+        NSLayoutConstraint.activate([
+            recognizedObjectLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            recognizedObjectLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            recognizedObjectLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            recognizedObjectLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 40)
+        ])
+    }
+
     // MARK: - Transition to Front Camera
 
     func transitionToFrontCamera() {
@@ -109,9 +134,17 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
     }
 
     func didUpdateRecognizedObjects(_ objects: [(identifier: String, confidence: VNConfidence)]) {
-        // Print out the recognized objects
-        for (identifier, confidence) in objects {
-            print("Recognized object: \(identifier), Confidence: \(confidence)")
+        DispatchQueue.main.async {
+            let confidenceThreshold: VNConfidence = 0.5
+            let maxObjectsToShow = 3
+            let filteredObjects = objects.filter { $0.confidence > confidenceThreshold }
+            let objectStrings = filteredObjects.prefix(maxObjectsToShow).map { "\($0.identifier) (\(Int($0.confidence * 100))%)" }
+            
+            if objectStrings.isEmpty {
+                self.recognizedObjectLabel.text = "No objects recognized"
+            } else {
+                self.recognizedObjectLabel.text = objectStrings.joined(separator: "\n")
+            }
         }
     }
 
@@ -147,4 +180,3 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
         }
     }
 }
-

@@ -4,6 +4,7 @@
 //
 //  Created by Miguel Sicart on 18/09/2024.
 //
+
 import UIKit
 import AVFoundation
 import Vision
@@ -15,6 +16,7 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
 
     let cameraManager = CameraManager()
     let recognitionManager = ObjectRecognitionManager()
+    var recognizedObjectLabel: UILabel!
 
     // MARK: - View Lifecycle
 
@@ -24,6 +26,7 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
 
         setupRecognitionManager()
         setupCamera()
+        setupRecognizedObjectLabel()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -50,6 +53,29 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
         cameraManager.checkCameraAuthorization()
     }
 
+    // MARK: - Recognized Object Label Setup
+
+    func setupRecognizedObjectLabel() {
+        recognizedObjectLabel = UILabel()
+        recognizedObjectLabel.translatesAutoresizingMaskIntoConstraints = false
+        recognizedObjectLabel.textAlignment = .center
+        recognizedObjectLabel.textColor = .white
+        recognizedObjectLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        recognizedObjectLabel.numberOfLines = 0 // Allow multiple lines
+        recognizedObjectLabel.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        recognizedObjectLabel.layer.cornerRadius = 8
+        recognizedObjectLabel.layer.masksToBounds = true
+
+        view.addSubview(recognizedObjectLabel)
+
+        NSLayoutConstraint.activate([
+            recognizedObjectLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            recognizedObjectLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            recognizedObjectLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            recognizedObjectLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 40)
+        ])
+    }
+
     // MARK: - Transition Back to Back Camera
 
     func returnToBackCamera() {
@@ -62,7 +88,7 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
 
     func didRecognizeTargetObject() {
         DispatchQueue.main.async {
-            SoundManager.shared.playSound(named: "buddha_sound", withExtension: "wav", numberOfLoops: -1)
+            SoundManager.shared.playSound(named: "soundfile", numberOfLoops: -1)
         }
     }
 
@@ -78,9 +104,17 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
     }
 
     func didUpdateRecognizedObjects(_ objects: [(identifier: String, confidence: VNConfidence)]) {
-        // Print out the recognized objects
-        for (identifier, confidence) in objects {
-            print("Recognized object: \(identifier), Confidence: \(confidence)")
+        DispatchQueue.main.async {
+            let confidenceThreshold: VNConfidence = 0.5
+            let maxObjectsToShow = 3
+            let filteredObjects = objects.filter { $0.confidence > confidenceThreshold }
+            let objectStrings = filteredObjects.prefix(maxObjectsToShow).map { "\($0.identifier) (\(Int($0.confidence * 100))%)" }
+            
+            if objectStrings.isEmpty {
+                self.recognizedObjectLabel.text = "No objects recognized"
+            } else {
+                self.recognizedObjectLabel.text = objectStrings.joined(separator: "\n")
+            }
         }
     }
 
@@ -115,3 +149,4 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
         }
     }
 }
+
