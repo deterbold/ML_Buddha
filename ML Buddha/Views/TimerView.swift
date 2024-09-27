@@ -69,6 +69,8 @@ class TimerView: UIView {
     }
 
     @objc private func updateTimer() {
+        playBlipSound() // Play sound each second
+
         timeRemaining -= 1
         timerLabel.text = "\(timeRemaining)"
 
@@ -81,4 +83,13 @@ class TimerView: UIView {
     func stopTimer() {
         countdownTimer?.invalidate()
     }
+
+    // MARK: - Sound Playback
+
+    private func playBlipSound() {
+        SoundManager.shared.playSound(named: "blip", withExtension: "aiff")
+    }
 }
+
+
+

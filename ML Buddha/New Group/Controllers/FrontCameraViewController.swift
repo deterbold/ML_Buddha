@@ -17,6 +17,13 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
     let cameraManager = CameraManager()
     let recognitionManager = ObjectRecognitionManager()
     var recognizedObjectLabel: UILabel!
+    var boundingBoxLayers = [CAShapeLayer]()
+
+    // New properties
+    let droneSounds = ["drone1", "drone2"] // Replace with your actual sound file names
+    var isDroneSoundPlaying = false
+    var lostObjectTimer: Timer?
+    let lostObjectTimeout: TimeInterval = 3.0
 
     // MARK: - View Lifecycle
 
@@ -38,12 +45,16 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
         super.viewWillDisappear(animated)
         cameraManager.stopSession()
         SoundManager.shared.stopSound()
+        isDroneSoundPlaying = false
+        lostObjectTimer?.invalidate()
+        lostObjectTimer = nil
     }
 
     // MARK: - Recognition Manager Setup
 
     func setupRecognitionManager() {
         recognitionManager.delegate = self
+        //recognitionManager.targetObjectIdentifier = "buddha" // Ensure the target identifier is set
     }
 
     // MARK: - Camera Setup
@@ -81,6 +92,9 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
     func returnToBackCamera() {
         cameraManager.stopSession()
         SoundManager.shared.stopSound()
+        isDroneSoundPlaying = false
+        lostObjectTimer?.invalidate()
+        lostObjectTimer = nil
         dismiss(animated: true, completion: nil)
     }
 
@@ -88,13 +102,13 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
 
     func didRecognizeTargetObject() {
         DispatchQueue.main.async {
-            SoundManager.shared.playSound(named: "soundfile", numberOfLoops: -1)
+            self.handleBuddhaDetected()
         }
     }
 
     func didLoseTargetObject() {
         DispatchQueue.main.async {
-            self.returnToBackCamera()
+            self.handleBuddhaNotDetected()
         }
     }
 
@@ -103,19 +117,109 @@ class FrontCameraViewController: UIViewController, CameraManagerDelegate, Object
         // Handle error, possibly show an alert
     }
 
-    func didUpdateRecognizedObjects(_ objects: [(identifier: String, confidence: VNConfidence)]) {
+    func didUpdateRecognizedObjects(_ objects: [RecognizedObject]) {
         DispatchQueue.main.async {
             let confidenceThreshold: VNConfidence = 0.5
-            let maxObjectsToShow = 3
             let filteredObjects = objects.filter { $0.confidence > confidenceThreshold }
-            let objectStrings = filteredObjects.prefix(maxObjectsToShow).map { "\($0.identifier) (\(Int($0.confidence * 100))%)" }
-            
+            let objectStrings = filteredObjects.map { "\($0.identifier) (\(Int($0.confidence * 100))%)" }
+
             if objectStrings.isEmpty {
                 self.recognizedObjectLabel.text = "No objects recognized"
             } else {
                 self.recognizedObjectLabel.text = objectStrings.joined(separator: "\n")
             }
+
+            // Draw bounding boxes
+            self.drawBoundingBoxes(for: filteredObjects)
         }
+    }
+
+    // MARK: - Handling Buddha Detection
+
+    func handleBuddhaDetected() {
+        // Reset lost object timer
+        self.lostObjectTimer?.invalidate()
+        self.lostObjectTimer = nil
+
+        // Start playing drone sound if not already playing
+        if !self.isDroneSoundPlaying {
+            self.isDroneSoundPlaying = true
+            self.playRandomDroneSound()
+        }
+    }
+
+    func handleBuddhaNotDetected() {
+        // Start or continue lost object timer
+        if self.lostObjectTimer == nil {
+            self.lostObjectTimer = Timer.scheduledTimer(timeInterval: lostObjectTimeout, target: self, selector: #selector(self.lostObjectTimerFired), userInfo: nil, repeats: false)
+        }
+    }
+
+    @objc func lostObjectTimerFired() {
+        // Buddha not detected for lostObjectTimeout seconds
+        self.lostObjectTimer?.invalidate()
+        self.lostObjectTimer = nil
+
+        // Stop drone sound if playing
+        if self.isDroneSoundPlaying {
+            SoundManager.shared.stopSound()
+            self.isDroneSoundPlaying = false
+        }
+
+        // Play "blip.aiff" sound
+        SoundManager.shared.playSound(named: "blip", withExtension: "aiff")
+
+        // Return to BackCameraViewController after a brief delay to allow sound to play
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.returnToBackCamera()
+        }
+    }
+
+    func playRandomDroneSound() {
+        guard let randomSoundName = self.droneSounds.randomElement() else {
+            print("No drone sounds available.")
+            return
+        }
+
+        SoundManager.shared.playSound(named: randomSoundName, withExtension: "mp3", numberOfLoops: -1)
+    }
+
+    // MARK: - Drawing Bounding Boxes
+
+    func drawBoundingBoxes(for objects: [RecognizedObject]) {
+        // Remove existing bounding boxes
+        for layer in boundingBoxLayers {
+            layer.removeFromSuperlayer()
+        }
+        boundingBoxLayers.removeAll()
+
+        guard let previewLayer = cameraManager.getPreviewLayer() else { return }
+
+        for object in objects {
+            let convertedRect = convertBoundingBox(object.boundingBox, in: previewLayer)
+            let boundingBoxPath = UIBezierPath(rect: convertedRect)
+
+            let shapeLayer = CAShapeLayer()
+            shapeLayer.path = boundingBoxPath.cgPath
+            shapeLayer.strokeColor = UIColor.red.cgColor
+            shapeLayer.fillColor = UIColor.clear.cgColor
+            shapeLayer.lineWidth = 2.0
+
+            boundingBoxLayers.append(shapeLayer)
+            previewLayer.addSublayer(shapeLayer)
+        }
+    }
+
+    func convertBoundingBox(_ boundingBox: CGRect, in layer: AVCaptureVideoPreviewLayer) -> CGRect {
+        // Convert normalized bounding box to layer coordinates
+        let x = boundingBox.origin.x
+        let y = 1 - boundingBox.origin.y - boundingBox.height
+        let width = boundingBox.width
+        let height = boundingBox.height
+
+        let rect = CGRect(x: x, y: y, width: width, height: height)
+        let convertedRect = layer.layerRectConverted(fromMetadataOutputRect: rect)
+        return convertedRect
     }
 
     // MARK: - CameraManagerDelegate

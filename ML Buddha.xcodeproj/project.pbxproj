@@ -7,10 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		42284AF82C9F7D5F001E6942 /* FastViTMA36F16.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 42284AF72C9F7D5F001E6942 /* FastViTMA36F16.mlpackage */; };
-		42284AFA2CA0C469001E6942 /* buddha_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 42284AF92CA0C469001E6942 /* buddha_sound.wav */; };
 		42284AFE2CA0C68F001E6942 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 42284AFD2CA0C68F001E6942 /* Assets.xcassets */; };
-		42284B002CA19FDB001E6942 /* ML_Buddha.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 42284AFF2CA19FDB001E6942 /* ML_Buddha.mlmodel */; };
+		42284B082CA55162001E6942 /* BuddhaViewer_Redux.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 42284B072CA55162001E6942 /* BuddhaViewer_Redux.mlmodel */; };
+		42284B0A2CA554CF001E6942 /* SplashScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42284B092CA554CF001E6942 /* SplashScreenViewController.swift */; };
+		42284B0C2CA55581001E6942 /* MLBuddha.png in Resources */ = {isa = PBXBuildFile; fileRef = 42284B0B2CA55581001E6942 /* MLBuddha.png */; };
+		42284B0E2CA56ACD001E6942 /* ManualViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42284B0D2CA56ACD001E6942 /* ManualViewController.swift */; };
+		42284B102CA56AE1001E6942 /* CreditsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42284B0F2CA56AE1001E6942 /* CreditsViewController.swift */; };
+		42284B162CA595C2001E6942 /* manual.html in Resources */ = {isa = PBXBuildFile; fileRef = 42284B152CA595C2001E6942 /* manual.html */; };
+		42284B182CA59AC4001E6942 /* credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 42284B172CA59AC4001E6942 /* credits.html */; };
+		42284B1A2CA6C740001E6942 /* blip.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 42284B192CA6C740001E6942 /* blip.aiff */; };
+		42284B232CA6F712001E6942 /* drone1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 42284B212CA6F712001E6942 /* drone1.mp3 */; };
+		42284B242CA6F712001E6942 /* drone2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 42284B222CA6F712001E6942 /* drone2.mp3 */; };
 		42E0E3C32C9B1F4E0076FFF7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3C22C9B1F4E0076FFF7 /* AppDelegate.swift */; };
 		42E0E3C52C9B1F4E0076FFF7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3C42C9B1F4E0076FFF7 /* SceneDelegate.swift */; };
 		42E0E3C72C9B1F4E0076FFF7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E0E3C62C9B1F4E0076FFF7 /* ViewController.swift */; };
@@ -27,10 +34,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		42284AF72C9F7D5F001E6942 /* FastViTMA36F16.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = FastViTMA36F16.mlpackage; sourceTree = "<group>"; };
-		42284AF92CA0C469001E6942 /* buddha_sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buddha_sound.wav; sourceTree = "<group>"; };
 		42284AFD2CA0C68F001E6942 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		42284AFF2CA19FDB001E6942 /* ML_Buddha.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ML_Buddha.mlmodel; sourceTree = "<group>"; };
+		42284B072CA55162001E6942 /* BuddhaViewer_Redux.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = BuddhaViewer_Redux.mlmodel; sourceTree = "<group>"; };
+		42284B092CA554CF001E6942 /* SplashScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenViewController.swift; sourceTree = "<group>"; };
+		42284B0B2CA55581001E6942 /* MLBuddha.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MLBuddha.png; sourceTree = "<group>"; };
+		42284B0D2CA56ACD001E6942 /* ManualViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualViewController.swift; sourceTree = "<group>"; };
+		42284B0F2CA56AE1001E6942 /* CreditsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsViewController.swift; sourceTree = "<group>"; };
+		42284B152CA595C2001E6942 /* manual.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = manual.html; sourceTree = "<group>"; };
+		42284B172CA59AC4001E6942 /* credits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = credits.html; sourceTree = "<group>"; };
+		42284B192CA6C740001E6942 /* blip.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = blip.aiff; sourceTree = "<group>"; };
+		42284B212CA6F712001E6942 /* drone1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = drone1.mp3; sourceTree = "<group>"; };
+		42284B222CA6F712001E6942 /* drone2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = drone2.mp3; sourceTree = "<group>"; };
 		42E0E3BF2C9B1F4E0076FFF7 /* ML Buddha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ML Buddha.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		42E0E3C22C9B1F4E0076FFF7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		42E0E3C42C9B1F4E0076FFF7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -78,13 +92,17 @@
 		42E0E3C12C9B1F4E0076FFF7 /* ML Buddha */ = {
 			isa = PBXGroup;
 			children = (
-				42284AFF2CA19FDB001E6942 /* ML_Buddha.mlmodel */,
+				42284B212CA6F712001E6942 /* drone1.mp3 */,
+				42284B222CA6F712001E6942 /* drone2.mp3 */,
+				42284B192CA6C740001E6942 /* blip.aiff */,
+				42284B172CA59AC4001E6942 /* credits.html */,
+				42284B152CA595C2001E6942 /* manual.html */,
+				42284B072CA55162001E6942 /* BuddhaViewer_Redux.mlmodel */,
 				42284AFD2CA0C68F001E6942 /* Assets.xcassets */,
-				42284AF92CA0C469001E6942 /* buddha_sound.wav */,
+				42284B0B2CA55581001E6942 /* MLBuddha.png */,
 				42E0E3C22C9B1F4E0076FFF7 /* AppDelegate.swift */,
 				42E0E3C42C9B1F4E0076FFF7 /* SceneDelegate.swift */,
 				42E0E3D02C9B1F500076FFF7 /* Info.plist */,
-				42284AF72C9F7D5F001E6942 /* FastViTMA36F16.mlpackage */,
 				42E0E3D92C9B218C0076FFF7 /* Controllers */,
 				42E0E3DD2C9B21C30076FFF7 /* Views */,
 				42E0E3DC2C9B21C00076FFF7 /* Managers */,
@@ -99,9 +117,12 @@
 		42E0E3D92C9B218C0076FFF7 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				42284B092CA554CF001E6942 /* SplashScreenViewController.swift */,
 				42E0E3EF2C9B26610076FFF7 /* InstructionViewController.swift */,
-				42E0E3E12C9B225B0076FFF7 /* FrontCameraViewController.swift */,
 				42E0E3DF2C9B223F0076FFF7 /* BackCameraViewController.swift */,
+				42E0E3E12C9B225B0076FFF7 /* FrontCameraViewController.swift */,
+				42284B0D2CA56ACD001E6942 /* ManualViewController.swift */,
+				42284B0F2CA56AE1001E6942 /* CreditsViewController.swift */,
 			);
 			name = Controllers;
 			path = "New Group/Controllers";
@@ -192,10 +213,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				42284AFA2CA0C469001E6942 /* buddha_sound.wav in Resources */,
 				42E0E3CF2C9B1F500076FFF7 /* Base in Resources */,
 				42284AFE2CA0C68F001E6942 /* Assets.xcassets in Resources */,
 				42E0E3CA2C9B1F4E0076FFF7 /* Base in Resources */,
+				42284B1A2CA6C740001E6942 /* blip.aiff in Resources */,
+				42284B162CA595C2001E6942 /* manual.html in Resources */,
+				42284B232CA6F712001E6942 /* drone1.mp3 in Resources */,
+				42284B242CA6F712001E6942 /* drone2.mp3 in Resources */,
+				42284B0C2CA55581001E6942 /* MLBuddha.png in Resources */,
+				42284B182CA59AC4001E6942 /* credits.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,14 +234,16 @@
 			files = (
 				42E0E3E42C9B22840076FFF7 /* TimerView.swift in Sources */,
 				42E0E3E62C9B22A30076FFF7 /* CameraManager.swift in Sources */,
-				42284B002CA19FDB001E6942 /* ML_Buddha.mlmodel in Sources */,
+				42284B0E2CA56ACD001E6942 /* ManualViewController.swift in Sources */,
+				42284B082CA55162001E6942 /* BuddhaViewer_Redux.mlmodel in Sources */,
 				42E0E3C72C9B1F4E0076FFF7 /* ViewController.swift in Sources */,
+				42284B102CA56AE1001E6942 /* CreditsViewController.swift in Sources */,
 				42E0E3C32C9B1F4E0076FFF7 /* AppDelegate.swift in Sources */,
 				42E0E3E82C9B22B10076FFF7 /* ObjectRecognitionManager.swift in Sources */,
 				42E0E3EC2C9B22C70076FFF7 /* Extensions.swift in Sources */,
+				42284B0A2CA554CF001E6942 /* SplashScreenViewController.swift in Sources */,
 				42E0E3E22C9B225B0076FFF7 /* FrontCameraViewController.swift in Sources */,
 				42E0E3F02C9B26610076FFF7 /* InstructionViewController.swift in Sources */,
-				42284AF82C9F7D5F001E6942 /* FastViTMA36F16.mlpackage in Sources */,
 				42E0E3E02C9B223F0076FFF7 /* BackCameraViewController.swift in Sources */,
 				42E0E3C52C9B1F4E0076FFF7 /* SceneDelegate.swift in Sources */,
 				42E0E3EA2C9B22BD0076FFF7 /* SoundManager.swift in Sources */,

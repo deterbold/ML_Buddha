@@ -19,6 +19,8 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
     var timerView: TimerView!
     var isTimerRunning = false
     var recognizedObjectLabel: UILabel!
+    var boundingBoxLayers = [CAShapeLayer]()
+    let backButton = UIButton(type: .system) // Added back button
 
     // MARK: - View Lifecycle
 
@@ -30,6 +32,7 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
         setupCamera()
         setupTimerView()
         setupRecognizedObjectLabel()
+        setupBackButton() // Setup back button
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -41,6 +44,39 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         cameraManager.stopSession()
+    }
+
+    // MARK: - Back Button Setup
+
+    func setupBackButton() {
+        // Set back arrow image
+        if let backImage = UIImage(systemName: "chevron.backward") {
+            backButton.setImage(backImage, for: .normal)
+            backButton.tintColor = .white // Set the color of the arrow
+        } else {
+            // If SF Symbols are not available, set a title instead
+            backButton.setTitle("Back", for: .normal)
+            backButton.setTitleColor(.white, for: .normal)
+        }
+
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+
+        view.addSubview(backButton)
+
+        // Position the back button
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            backButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            backButton.widthAnchor.constraint(equalToConstant: 44),
+            backButton.heightAnchor.constraint(equalToConstant: 44)
+        ])
+    }
+
+    // MARK: - Back Button Action
+
+    @objc func backButtonTapped() {
+        dismiss(animated: true, completion: nil)
     }
 
     // MARK: - Recognition Manager Setup
@@ -133,7 +169,7 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
         // Handle error, possibly show an alert
     }
 
-    func didUpdateRecognizedObjects(_ objects: [(identifier: String, confidence: VNConfidence)]) {
+    func didUpdateRecognizedObjects(_ objects: [RecognizedObject]) {
         DispatchQueue.main.async {
             let confidenceThreshold: VNConfidence = 0.5
             let maxObjectsToShow = 3
@@ -141,11 +177,52 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
             let objectStrings = filteredObjects.prefix(maxObjectsToShow).map { "\($0.identifier) (\(Int($0.confidence * 100))%)" }
             
             if objectStrings.isEmpty {
-                self.recognizedObjectLabel.text = "No objects recognized"
+                self.recognizedObjectLabel.text = "No Buddha present"
             } else {
                 self.recognizedObjectLabel.text = objectStrings.joined(separator: "\n")
             }
+            
+            // Draw bounding boxes
+            self.drawBoundingBoxes(for: filteredObjects)
         }
+    }
+
+    // MARK: - Drawing Bounding Boxes
+
+    func drawBoundingBoxes(for objects: [RecognizedObject]) {
+        // Remove existing bounding boxes
+        for layer in boundingBoxLayers {
+            layer.removeFromSuperlayer()
+        }
+        boundingBoxLayers.removeAll()
+        
+        guard let previewLayer = cameraManager.getPreviewLayer() else { return }
+        
+        for object in objects {
+            let convertedRect = convertBoundingBox(object.boundingBox, in: previewLayer)
+            let boundingBoxPath = UIBezierPath(rect: convertedRect)
+            
+            let shapeLayer = CAShapeLayer()
+            shapeLayer.path = boundingBoxPath.cgPath
+            shapeLayer.strokeColor = UIColor.red.cgColor
+            shapeLayer.fillColor = UIColor.clear.cgColor
+            shapeLayer.lineWidth = 2.0
+            
+            boundingBoxLayers.append(shapeLayer)
+            previewLayer.addSublayer(shapeLayer)
+        }
+    }
+
+    func convertBoundingBox(_ boundingBox: CGRect, in layer: AVCaptureVideoPreviewLayer) -> CGRect {
+        // Convert normalized bounding box to layer coordinates
+        let x = boundingBox.origin.x
+        let y = 1 - boundingBox.origin.y - boundingBox.height
+        let width = boundingBox.width
+        let height = boundingBox.height
+        
+        let rect = CGRect(x: x, y: y, width: width, height: height)
+        let convertedRect = layer.layerRectConverted(fromMetadataOutputRect: rect)
+        return convertedRect
     }
 
     // MARK: - CameraManagerDelegate
@@ -180,3 +257,4 @@ class BackCameraViewController: UIViewController, CameraManagerDelegate, ObjectR
         }
     }
 }
+

@@ -14,7 +14,13 @@ protocol ObjectRecognitionManagerDelegate: AnyObject {
     func didRecognizeTargetObject()
     func didLoseTargetObject()
     func didEncounterRecognitionError(_ error: Error)
-    func didUpdateRecognizedObjects(_ objects: [(identifier: String, confidence: VNConfidence)])
+    func didUpdateRecognizedObjects(_ objects: [RecognizedObject])
+}
+
+struct RecognizedObject {
+    let identifier: String
+    let confidence: VNConfidence
+    let boundingBox: CGRect
 }
 
 class ObjectRecognitionManager {
@@ -23,15 +29,14 @@ class ObjectRecognitionManager {
     
     private var detectionRequest: VNCoreMLRequest!
     private var detectionModel: VNCoreMLModel!
-    //private var modelName: FastViTMA36F16!
-    private var modelName: ML_Buddha!
+    private var modelName: BuddhaViewer_Redux! // Replace with your model class name
     
     private var isObjectDetected = false
     private var detectionCounter = 0
     private let detectionThreshold = 5
     
-    // Replace 'YourObjectIdentifier' with the identifier of your target object
-    private let targetObjectIdentifier = "YourObjectIdentifier"
+    // Replace with your target object identifier
+    private let targetObjectIdentifier = "buddha"
     
     weak var delegate: ObjectRecognitionManagerDelegate?
     
@@ -46,10 +51,10 @@ class ObjectRecognitionManager {
     private func setupModel() {
         do {
             let defaultConfig = MLModelConfiguration()
-            //modelName = try FastViTMA36F16(configuration: defaultConfig)
-            modelName = try ML_Buddha(configuration: defaultConfig)
+            modelName = try BuddhaViewer_Redux(configuration: defaultConfig) // Replace with your model class name
             detectionModel = try VNCoreMLModel(for: modelName.model)
             detectionRequest = VNCoreMLRequest(model: detectionModel, completionHandler: handleDetection)
+            detectionRequest.imageCropAndScaleOption = .scaleFill
         } catch {
             delegate?.didEncounterRecognitionError(error)
         }
@@ -76,42 +81,35 @@ class ObjectRecognitionManager {
             return
         }
         
-        guard let results = request.results as? [VNClassificationObservation] else { return }
+        guard let results = request.results as? [VNRecognizedObjectObservation] else { return }
         
-        // Extract identifiers and confidences
-        let recognizedObjects = results.map { ($0.identifier, $0.confidence) }
+        // Convert observations to RecognizedObject
+        let recognizedObjects = results.map { observation -> RecognizedObject in
+            let identifier = observation.labels.first?.identifier ?? "Unknown"
+            let confidence = observation.labels.first?.confidence ?? 0
+            let boundingBox = observation.boundingBox
+            return RecognizedObject(identifier: identifier, confidence: confidence, boundingBox: boundingBox)
+        }
         
         // Notify the delegate with the recognized objects
         DispatchQueue.main.async {
             self.delegate?.didUpdateRecognizedObjects(recognizedObjects)
         }
         
-        // Existing logic for detecting the target object
-        if let topResult = results.first {
-            if topResult.identifier == targetObjectIdentifier && topResult.confidence > 0.8 {
-                detectionCounter = 0
-                if !isObjectDetected {
-                    isObjectDetected = true
-                    DispatchQueue.main.async {
-                        self.delegate?.didRecognizeTargetObject()
-                    }
-                }
-            } else {
-                detectionCounter += 1
-                if detectionCounter > detectionThreshold {
-                    if isObjectDetected {
-                        isObjectDetected = false
-                        DispatchQueue.main.async {
-                            self.delegate?.didLoseTargetObject()
-                        }
-                    }
+        // Detect the target object
+        if let targetObject = recognizedObjects.first(where: { $0.identifier == self.targetObjectIdentifier && $0.confidence > 0.8 }) {
+            self.detectionCounter = 0
+            if !self.isObjectDetected {
+                self.isObjectDetected = true
+                DispatchQueue.main.async {
+                    self.delegate?.didRecognizeTargetObject()
                 }
             }
         } else {
-            detectionCounter += 1
-            if detectionCounter > detectionThreshold {
-                if isObjectDetected {
-                    isObjectDetected = false
+            self.detectionCounter += 1
+            if self.detectionCounter > self.detectionThreshold {
+                if self.isObjectDetected {
+                    self.isObjectDetected = false
                     DispatchQueue.main.async {
                         self.delegate?.didLoseTargetObject()
                     }
