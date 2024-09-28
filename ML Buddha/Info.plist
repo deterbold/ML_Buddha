@@ -21,9 +21,5 @@
 			</array>
 		</dict>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>This app will use the camera to recognize objects</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires access to the microphone for audio recording and analysis</string>
 </dict>
 </plist>
